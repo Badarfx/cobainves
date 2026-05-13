@@ -1,0 +1,38 @@
+// ===== BAINVES - Supabase Configuration =====
+// GANTI dengan URL dan Anon Key dari project Supabase kamu!
+// Cara dapatkan: Settings → API → Project URL + anon/public key
+const SUPABASE_URL = "https://qgdqhlptxdrxqsxixvlv.supabase.co";
+const SUPABASE_ANON_KEY = "sb_secret_Y6bx31jNk1Na8MLFyKCq2Q_wKCv17Wy";
+
+let supabase = null;
+
+// Cek apakah Supabase SDK berhasil dimuat
+if (typeof supabaseJs !== 'undefined') {
+  supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  console.log('✅ Supabase SDK loaded');
+} else {
+  console.warn('⚠️ Supabase SDK tidak dapat dimuat. Jalankan via local server.');
+  // Objek dummy agar tidak error
+  supabase = {
+    auth: {
+      signInWithPassword: async () => ({ error: new Error('Supabase offline') }),
+      signUp: async () => ({ error: new Error('Supabase offline') }),
+      signOut: async () => {},
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      getUser: async () => ({ data: { user: null }, error: null })
+    },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: new Error('Supabase offline') }),
+          order: () => ({ limit: async () => ({ data: [], error: null }) })
+        }),
+        order: () => ({ limit: async () => ({ data: [], error: null }) })
+      }),
+      insert: async () => ({ error: new Error('Supabase offline') }),
+      update: () => ({ eq: async () => ({ error: new Error('Supabase offline') }) }),
+      upsert: async () => ({ error: new Error('Supabase offline') })
+    }),
+    rpc: async () => ({ data: null, error: new Error('Supabase offline') })
+  };
+}
