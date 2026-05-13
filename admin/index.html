@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naire Admin - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="loginScreen" class="login-screen active">
+    <div class="login-bg-animation">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-icon">⚡</div>
+        <h1>NAIRE<span>Admin</span></h1>
+      </div>
+      <p class="login-subtitle">Panel Administrasi</p>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label>Email Admin</label>
+          <input type="email" id="loginEmail" placeholder="admin@naire.app" required />
+        </div>
+        <div class="input-group">
+          <label>Kata Sandi</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <div id="loginError" class="error-msg"></div>
+        <button type="submit" class="btn-login">Masuk ke Dashboard →</button>
+      </form>
+      <p class="login-footer">
+        <a href="../reward-quiz-app/index.html" target="_blank">← Kembali ke Website</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN APP ===== -->
+  <div id="adminApp" class="admin-app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <span class="brand-name">NAIRE</span>
+          <span class="brand-role">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="members" onclick="navigateTo('members')">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Member</span>
+        </button>
+        <button class="nav-item" data-page="affiliates" onclick="navigateTo('affiliates')">
+          <span class="nav-icon">🔗</span>
+          <span class="nav-label">Affiliate</span>
+        </button>
+        <button class="nav-item" data-page="withdrawals" onclick="navigateTo('withdrawals')">
+          <span class="nav-icon">💰</span>
+          <span class="nav-label">Penarikan</span>
+        </button>
+        <button class="nav-item" data-page="redemptions" onclick="navigateTo('redemptions')">
+          <span class="nav-icon">🎁</span>
+          <span class="nav-label">Penukaran</span>
+        </button>
+        <button class="nav-item" data-page="prizes" onclick="navigateTo('prizes')">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Hadiah</span>
+        </button>
+        <button class="nav-item" data-page="packages" onclick="navigateTo('packages')">
+          <span class="nav-icon">📦</span>
+          <span class="nav-label">Paket</span>
+        </button>
+        <button class="nav-item" data-page="quizzes" onclick="navigateTo('quizzes')">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Kuis</span>
+        </button>
+        <button class="nav-item" data-page="settings" onclick="navigateTo('settings')">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Pengaturan</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-info">
+          <div class="admin-avatar" id="adminAvatar">A</div>
+          <div class="admin-detail">
+            <span class="admin-name" id="adminName">Admin</span>
+            <span class="admin-badge">Administrator</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">
+          <span>🚪</span> Keluar
+        </button>
+      </div>
+    </aside>
+
+    <!-- Overlay mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title">
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Ringkasan data platform Naire</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Cari..." id="globalSearch" oninput="globalSearch(this.value)" />
+          </div>
+          <button class="topbar-btn" onclick="refreshData()">🔄</button>
+          <button class="topbar-btn notification-btn">
+            🔔
+            <span class="notif-badge" id="notifBadge">3</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <section class="page-content" id="pageContent"></section>
+    </main>
+  </div>
+
+  <!-- ===== MODAL ===== -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/admin-app.js"></script>
+</body>
+</html>
